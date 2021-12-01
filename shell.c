@@ -47,8 +47,8 @@ char *read_line(void)
 {
     char *line = NULL; // holds the entered line
     ssize_t buffsize = 0; //getline will allocate buffersize
-    if(getline(&line, &buffsize, stdin)) !=-1) {
-        if (feof(stdin)) { // if EOF or ctrl+D enteterd: quit
+    if(getline(&line, &buffsize, stdin) != -1) {
+        if (feof(stdin)) { // if EOF or ctrl+D entered: quit
             exit(EXIT_SUCCESS);
         } else {
             perror("readline"); // if not then some weird error
