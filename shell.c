@@ -47,7 +47,7 @@ char *read_line(void)
 {
     char *line = NULL; // holds the entered line
     ssize_t buffsize = 0; //getline will allocate buffersize
-    if(getline(&line, &buffsize, stdin) != -1) {
+    if (getline(&line, &buffsize, stdin) == -1) {
         if (feof(stdin)) { // if EOF or ctrl+D entered: quit
             exit(EXIT_SUCCESS);
         } else {
@@ -57,6 +57,36 @@ char *read_line(void)
     } // if
     return line;
 } //read_line
+
+char **split_line(char *line) 
+{
+    int bufsize = 64; // 64 bytes
+    int position = 0;
+    char **tokens = malloc(bufsize * sizeof(char*));
+    char *token;
+
+    if(!tokens) {
+        fprintf(stderr, "malloc error\n");
+        exit(EXIT_FAILURE);
+    }
+    token = strtok(line," \t\r\r\n\a"); // returns pointer to first token
+    // is only not null if there is another token
+    while(token != NULL) {
+        tokens[position] = token; // sets token at tokens[i]
+        position ++; // increase position
+        if (position >= bufsize) { //no space for tokens in **tokens
+            bufsize += 64;
+            tokens = realloc(tokens, bufsize * sizeof(char *));
+            if (!tokens) {
+                fprintf(stderr, "realloc error\n");
+                exit(EXIT_FAILURE);
+            } // if
+        } // if
+        token = strtok(line," \t\r\r\n\a"); //points to next token
+    } // while
+    tokens[position] = NULL;
+    return tokens;
+} // split_line
 
 int main(int argc, char *argv[]) 
 {
